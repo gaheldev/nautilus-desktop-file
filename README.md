@@ -10,6 +10,14 @@ They'll be stored in `~/.local/share/applications/` and will be named after the 
 1. Git clone _(recommended)_ or download
 2. Symlink _(recommended)_ or extract to `~/.local/share/nautilus/scripts`
 
+>[!WARNING]
+> Use hard symlink as nautilus doesn't seem to work with symbolic link
+
+```
+cd nautilus-desktop-file
+ln Make\ Desktop\ File ~/.local/share/nautilus/scripts/Make\ Desktop\ File
+```
+
 # Updating
 If you used Git clone and symlinked the script; all you have to do is run `git pull` in the Git cloned directory to update the files.\
 Otherwise, you'll have to re-download all the files and extract them to your nautilus scripts folder on each update.
