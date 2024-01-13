@@ -7,11 +7,15 @@
 # Path to the directory where the desktop files will be created
 desktop_path="$HOME/.local/share/applications/"
 
-# Append our custom directory to the path
-desktop_path+="user/"
+# Path to the directory where temporary icon files will be created
+icons_path="/tmp/nautilus-desktop-file/"
 
-# Create the directory if it doesn't exist
+# Vendor prefix to identify our desktop entries
+vendor_prefix="nautilus-desktop-file-"
+
+# Create the directories if they don't exist
 mkdir -p "$desktop_path"
+mkdir -p "$icons_path"
 
 # Counter for how many files were created
 desktop_files_created=0
@@ -35,8 +39,9 @@ for uri in "$@"; do
 	fi
 	
 	# Get the filename
-	filename=$(basename "$uri")
-	
+	name=$(basename "$uri")
+	filename=$vendor_prefix$name
+
 	# Prepare the default error message
 	error_message="A desktop file could not be created for $filename"
 	
@@ -50,13 +55,13 @@ for uri in "$@"; do
 	echo "[Desktop Entry]
 Type=Application
 Encoding=UTF-8
-Name=$filename
+Name=$name
 Comment=User created desktop file
 Exec=\"$uri\"
 Icon=
 Terminal=false
 Categories=;
-Keywords=$filename;" > "$desktop_path$filename.desktop"
+Keywords=$name;" > "$desktop_path$filename.desktop"
 
 	# Make sure the file was created
 	if [ ! -f "$desktop_path$filename.desktop" ]; then
@@ -71,6 +76,9 @@ Keywords=$filename;" > "$desktop_path$filename.desktop"
 		error_message="The permissions of the desktop file could not be changed"
 		continue
 	fi
+
+	# Install desktop entry
+	xdg-desktop-menu install $desktop_path$filename.desktop
 	
 	# Increment the counter
 	desktop_files_created=$((desktop_files_created+1))
@@ -82,7 +90,7 @@ if [ $desktop_files_created -gt 0 ]; then
 	if [ $desktop_files_created -eq 1 ]; then
 		# Tell the user the filename
 		# Also give him the option to edit the file or just click okay
-		zenity --question --text "A desktop file was created for $filename" --ok-label="OK" --cancel-label="Edit"
+		zenity --question --text "A desktop file was created for $name" --ok-label="OK" --cancel-label="Edit"
 		if [ $? -eq 1 ]; then
 			# Edit the file
 			xdg-open "$desktop_path$filename.desktop"
