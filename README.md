@@ -4,7 +4,7 @@ A simple script to create a [desktop](https://specifications.freedesktop.org/des
 Right click any executable, go to "Scripts" and select "Make Desktop File".
 
 Desktop files are used to launch applications from the desktop, menus, and other locations.\
-They'll be stored in `~/.local/share/applications/` and will be named after the executable.
+They'll be stored in `~/.local/share/applications/` and will be named after the executable with the prefix `nautilus-desktop-file-`.
 
 # Installation
 1. Git clone _(recommended)_ or download
