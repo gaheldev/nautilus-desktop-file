@@ -50,6 +50,27 @@ for uri in "$@"; do
 		error_message="A desktop file already exists for $filename"
 		continue
 	fi
+
+	# Get the file custom icon if it exists
+	custom_icon=$(gio info "$uri" | grep "metadata::custom-icon" | sed "s/.*file:\/\///g")
+
+	# Create a desktop icon
+	if [ -f $custom_icon ]; then
+		# get icon extension
+		icon_ext="${custom_icon##*.}"
+
+		# name icon using application name with vendor prefix "user"
+		icon_name="${filename}"
+
+		# copy icon to icons_path
+		icon_uri="${icons_path}${icon_name}.${icon_ext}"
+		cp $custom_icon $icon_uri
+
+		# install icon to hicolor theme after resizing it
+		xdg-icon-resource install --size 256 $icon_uri
+	else
+		icon_name=""
+	fi
 	
 	# Create the desktop file
 	echo "[Desktop Entry]
@@ -58,7 +79,7 @@ Encoding=UTF-8
 Name=$name
 Comment=User created desktop file
 Exec=\"$uri\"
-Icon=
+Icon=$icon_name
 Terminal=false
 Categories=;
 Keywords=$name;" > "$desktop_path$filename.desktop"
